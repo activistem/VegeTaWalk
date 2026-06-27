@@ -133,6 +133,99 @@
     font-weight: 700;
   }
 
+  /* Emergency SOS button */
+  .sos-zone {
+    width: 100%;
+    padding: 14px 16px;
+    border-top: 1px solid rgba(255,100,100,0.3);
+  }
+
+  .sos-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #d32f2f, #b71c1c);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(180,0,0,0.4);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+
+  .sos-btn:hover {
+    transform: scale(1.03);
+    box-shadow: 0 6px 20px rgba(180,0,0,0.55);
+  }
+
+  .sos-btn:active { transform: scale(0.97); }
+
+  .sos-pulse {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #fff;
+    animation: sosPulse 1.2s ease-in-out infinite;
+  }
+
+  @keyframes sosPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.6); }
+  }
+
+  /* SOS modal */
+  .sos-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.65);
+    z-index: 500;
+    align-items: center;
+    justify-content: center;
+  }
+  .sos-overlay.open { display: flex; }
+
+  .sos-modal {
+    background: #fff;
+    border-radius: 20px;
+    padding: 32px 28px;
+    max-width: 360px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+  }
+
+  .sos-modal-icon { font-size: 48px; margin-bottom: 12px; }
+  .sos-modal h2 { font-size: 20px; font-weight: 800; color: #b71c1c; margin-bottom: 8px; }
+  .sos-modal p  { font-size: 13px; color: #555; line-height: 1.7; margin-bottom: 20px; }
+
+  .sos-contact-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+
+  .sos-contact-btn {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 2px solid;
+    font-size: 14px; font-weight: 700;
+    cursor: pointer; text-decoration: none;
+    transition: opacity 0.15s;
+  }
+  .sos-contact-btn:hover { opacity: 0.82; }
+  .sos-contact-btn.emergency { background: #d32f2f; color: #fff; border-color: #d32f2f; }
+  .sos-contact-btn.family    { background: #1565c0; color: #fff; border-color: #1565c0; }
+  .sos-contact-btn.nurse     { background: #2e7d32; color: #fff; border-color: #2e7d32; }
+
+  .sos-cancel {
+    font-size: 13px; color: #888; background: none; border: none;
+    cursor: pointer; text-decoration: underline; margin-top: 4px;
+  }
+
   .sidebar-bottom {
     width: 100%;
     padding: 16px;
@@ -1397,7 +1490,7 @@
     <div class="sidebar-user">
       <div class="user-avatar">👴</div>
       <div class="user-name">田中 正雄さん</div>
-      <div class="user-sub">📍 長野市 / 75歳</div>
+      <div class="user-sub">📍 新宮市 / 75歳</div>
     </div>
 
     <nav>
@@ -1421,11 +1514,52 @@
       </a>
     </nav>
 
+    <!-- Emergency SOS -->
+    <div class="sos-zone">
+      <button class="sos-btn" onclick="openSOS()">
+        <span class="sos-pulse"></span>
+        🆘 緊急連絡
+      </button>
+    </div>
+
     <div class="sidebar-bottom">
       <a href="#">⚙️ 設定</a>
       <a href="#">❓ ヘルプ</a>
     </div>
   </aside>
+
+  <!-- SOS Modal -->
+  <div class="sos-overlay" id="sosModal" onclick="if(event.target===this) closeSOS()">
+    <div class="sos-modal">
+      <div class="sos-modal-icon">🆘</div>
+      <h2>緊急連絡</h2>
+      <p>どこに連絡しますか？<br>ボタンをタップしてください。</p>
+      <div class="sos-contact-list">
+        <a class="sos-contact-btn emergency" href="tel:119" onclick="closeSOS()">
+          <span style="font-size:20px;">🚑</span>
+          <div style="text-align:left;">
+            <div>119番（救急・消防）</div>
+            <div style="font-size:11px; font-weight:400; opacity:0.85;">生命に関わる緊急時</div>
+          </div>
+        </a>
+        <a class="sos-contact-btn family" href="tel:09012345678" onclick="closeSOS()">
+          <span style="font-size:20px;">👧</span>
+          <div style="text-align:left;">
+            <div>田中 洋子（娘）に電話</div>
+            <div style="font-size:11px; font-weight:400; opacity:0.85;">090-1234-5678</div>
+          </div>
+        </a>
+        <a class="sos-contact-btn nurse" href="#" onclick="event.preventDefault(); sendSOSMessage(); closeSOS()">
+          <span style="font-size:20px;">🧑‍⚕️</span>
+          <div style="text-align:left;">
+            <div>担当ナースに通知</div>
+            <div style="font-size:11px; font-weight:400; opacity:0.85;">Vege Ta Walk サポートセンター</div>
+          </div>
+        </a>
+      </div>
+      <button class="sos-cancel" onclick="closeSOS()">キャンセル</button>
+    </div>
+  </div>
 
   <!-- ===== MAIN ===== -->
   <div class="main">
@@ -1665,7 +1799,7 @@
         <div class="card">
           <div class="sec-header">
             <div class="sec-title" style="margin-bottom:0">🥕 野菜と交換しよう</div>
-            <a href="#" class="btn-ghost">一覧を見る →</a>
+            <a href="#" class="btn-ghost" onclick="event.preventDefault(); navigateTo('exchange')">一覧を見る →</a>
           </div>
 
           <div style="font-size:12px; color:var(--text-light); margin-bottom:14px;">
@@ -1677,14 +1811,14 @@
               <span class="veg-tag-new">NEW</span>
               <span class="veg-emoji">🍅</span>
               <div class="veg-name">トマト（規格外）</div>
-              <div class="veg-farm">山田農園・長野市</div>
+              <div class="veg-farm">山田農園・新宮市</div>
               <div class="veg-pts">🌟 200pt</div>
             </div>
 
             <div class="veg-card available">
               <span class="veg-emoji">🥦</span>
               <div class="veg-name">ブロッコリー</div>
-              <div class="veg-farm">鈴木農場・長野市</div>
+              <div class="veg-farm">鈴木農場・新宮市</div>
               <div class="veg-pts">🌟 150pt</div>
             </div>
 
@@ -1692,28 +1826,28 @@
               <span class="veg-tag-low">残り3</span>
               <span class="veg-emoji">🥕</span>
               <div class="veg-name">人参（まがり）</div>
-              <div class="veg-farm">田村農園・飯田市</div>
+              <div class="veg-farm">田村農園・尾鷲市</div>
               <div class="veg-pts">🌟 100pt</div>
             </div>
 
             <div class="veg-card available">
               <span class="veg-emoji">🍆</span>
               <div class="veg-name">なす（大玉）</div>
-              <div class="veg-farm">小林農家・松本市</div>
+              <div class="veg-farm">小林農家・田辺市</div>
               <div class="veg-pts">🌟 120pt</div>
             </div>
 
             <div class="veg-card locked">
               <span class="veg-emoji">🌽</span>
               <div class="veg-name">とうもろこし</div>
-              <div class="veg-farm">高橋農場・長野市</div>
+              <div class="veg-farm">高橋農場・新宮市</div>
               <div class="veg-pts">🌟 500pt</div>
             </div>
 
             <div class="veg-card locked">
               <span class="veg-emoji">🍠</span>
               <div class="veg-name">さつまいも</div>
-              <div class="veg-farm">中村農園・上田市</div>
+              <div class="veg-farm">中村農園・熊野市</div>
               <div class="veg-pts">🌟 350pt</div>
             </div>
           </div>
@@ -1735,7 +1869,7 @@
               <div class="ci-icon orange">📋</div>
               <div class="ci-info">
                 <div class="ci-name">特定健診 2026年度</div>
-                <div class="ci-date">📅 7月12日（土）9:00〜 長野市民会館</div>
+                <div class="ci-date">📅 7月12日（土）9:00〜 新宮市民会館</div>
               </div>
               <span class="ci-status upcoming-s">予定あり</span>
             </div>
@@ -2161,7 +2295,7 @@
               </div>
 
               <div style="margin-top:16px; text-align:center;">
-                <a href="#" class="btn-primary" style="width:100%; justify-content:center;">🥕 野菜と交換する</a>
+                <a href="#" class="btn-primary" style="width:100%; justify-content:center;" onclick="event.preventDefault(); navigateTo('exchange')">🥕 野菜と交換する</a>
               </div>
             </div>
           </div>
@@ -2182,7 +2316,7 @@
           <div style="width:1px; background:var(--border); height:40px; margin:0 8px;"></div>
           <div style="font-size:13px; color:var(--text-mid); line-height:1.6;">
             農家から提供された <strong style="color:var(--green-dark)">規格外野菜</strong> とポイントで交換できます。<br>
-            ※ 受け取りは毎週土曜日・長野市民会館にて
+            ※ 受け取りは毎週土曜日・新宮市民会館にて
           </div>
         </div>
 
@@ -2197,7 +2331,7 @@
             <div class="exveg-qty">3本セット</div>
             <div class="exveg-pts-badge">🌟 100pt</div>
             <div class="exveg-stock">残り 5セット</div>
-            <button class="exveg-btn" onclick="alert('「長野産 なす（3本）」を100ptで交換申請しました！\n土曜日に長野市民会館でお受け取りください。')">🛒 交換する</button>
+            <button class="exveg-btn" onclick="alert('「長野産 なす（3本）」を100ptで交換申請しました！\n土曜日に新宮市民会館でお受け取りください。')">🛒 交換する</button>
           </div>
 
           <div class="exveg-card">
@@ -2206,7 +2340,7 @@
             <div class="exveg-qty">5本セット</div>
             <div class="exveg-pts-badge">🌟 80pt</div>
             <div class="exveg-stock">残り 12セット</div>
-            <button class="exveg-btn" onclick="alert('「信州 きゅうり（5本）」を80ptで交換申請しました！\n土曜日に長野市民会館でお受け取りください。')">🛒 交換する</button>
+            <button class="exveg-btn" onclick="alert('「信州 きゅうり（5本）」を80ptで交換申請しました！\n土曜日に新宮市民会館でお受け取りください。')">🛒 交換する</button>
           </div>
 
           <div class="exveg-card">
@@ -2216,7 +2350,7 @@
             <div class="exveg-qty">2本セット</div>
             <div class="exveg-pts-badge">🌟 120pt</div>
             <div class="exveg-stock">残り 3セット</div>
-            <button class="exveg-btn" onclick="alert('「農家直送 ズッキーニ（2本）」を120ptで交換申請しました！\n土曜日に長野市民会館でお受け取りください。')">🛒 交換する</button>
+            <button class="exveg-btn" onclick="alert('「農家直送 ズッキーニ（2本）」を120ptで交換申請しました！\n土曜日に新宮市民会館でお受け取りください。')">🛒 交換する</button>
           </div>
 
           <div class="exveg-card">
@@ -2225,7 +2359,7 @@
             <div class="exveg-qty">4個セット</div>
             <div class="exveg-pts-badge">🌟 150pt</div>
             <div class="exveg-stock">残り 8セット</div>
-            <button class="exveg-btn" onclick="alert('「長野産 トマト（4個）」を150ptで交換申請しました！\n土曜日に長野市民会館でお受け取りください。')">🛒 交換する</button>
+            <button class="exveg-btn" onclick="alert('「長野産 トマト（4個）」を150ptで交換申請しました！\n土曜日に新宮市民会館でお受け取りください。')">🛒 交換する</button>
           </div>
 
           <div class="exveg-card">
@@ -2235,7 +2369,7 @@
             <div class="exveg-qty">2本セット</div>
             <div class="exveg-pts-badge">🌟 200pt</div>
             <div class="exveg-stock low-stock">残り わずか 2セット</div>
-            <button class="exveg-btn" onclick="alert('「特選 とうもろこし（2本）」を200ptで交換申請しました！\n土曜日に長野市民会館でお受け取りください。')">🛒 交換する</button>
+            <button class="exveg-btn" onclick="alert('「特選 とうもろこし（2本）」を200ptで交換申請しました！\n土曜日に新宮市民会館でお受け取りください。')">🛒 交換する</button>
           </div>
 
           <div class="exveg-card">
@@ -2244,7 +2378,7 @@
             <div class="exveg-qty">6個セット</div>
             <div class="exveg-pts-badge">🌟 60pt</div>
             <div class="exveg-stock">残り 20セット</div>
-            <button class="exveg-btn" onclick="alert('「地元産 ピーマン（6個）」を60ptで交換申請しました！\n土曜日に長野市民会館でお受け取りください。')">🛒 交換する</button>
+            <button class="exveg-btn" onclick="alert('「地元産 ピーマン（6個）」を60ptで交換申請しました！\n土曜日に新宮市民会館でお受け取りください。')">🛒 交換する</button>
           </div>
 
         </div>
@@ -2290,7 +2424,7 @@
             <div class="pickup-card">
               <div class="pc-title">📍 受け取り場所・日程</div>
               <div style="font-size:14px; color:#1a4a8a; line-height:2; font-weight:600;">
-                🏛 長野市民会館<br>
+                🏛 新宮市民会館<br>
                 📅 毎週土曜日<br>
                 ⏰ 午前 9:00 〜 12:00
               </div>
@@ -2322,8 +2456,8 @@
           <div class="cnc-info">
             <h3>次回健康診断のご予定</h3>
             <div class="cnc-date">📅 2026年7月12日（土）午前 10:00 〜</div>
-            <div class="cnc-loc">📍 長野市民会館　大会議室</div>
-            <a href="#" class="cnc-btn" onclick="alert('予約確認画面を開きます。\n予約番号：LNG-2026-0712-田中\n会場：長野市民会館 大会議室\n時間：10:00〜'); return false;">📋 予約を確認する</a>
+            <div class="cnc-loc">📍 新宮市民会館　大会議室</div>
+            <a href="#" class="cnc-btn" onclick="alert('予約確認画面を開きます。\n予約番号：LNG-2026-0712-田中\n会場：新宮市民会館 大会議室\n時間：10:00〜'); return false;">📋 予約を確認する</a>
           </div>
           <div style="text-align:right; flex-shrink:0;">
             <div style="font-size:13px; opacity:0.85; margin-bottom:6px;">今年の参加</div>
@@ -2431,7 +2565,7 @@
                   <span class="ci-check">⬜</span>
                   <div>
                     <div style="font-weight:600; color:var(--text-dark);">当日 健康手帳を持参</div>
-                    <div style="font-size:12px; color:var(--text-light);">長野市発行の健康手帳</div>
+                    <div style="font-size:12px; color:var(--text-light);">新宮市発行の健康手帳</div>
                   </div>
                 </div>
                 <div class="checklist-item">
@@ -2464,7 +2598,7 @@
                 <div style="width:52px; height:52px; border-radius:50%; background:#e6f0fb; display:flex; align-items:center; justify-content:center; font-size:28px; flex-shrink:0;">👩‍⚕️</div>
                 <div>
                   <div style="font-size:16px; font-weight:700; color:var(--text-dark);">佐々木 先生</div>
-                  <div style="font-size:12px; color:var(--text-light);">長野市健康支援センター</div>
+                  <div style="font-size:12px; color:var(--text-light);">新宮市健康支援センター</div>
                   <div style="font-size:13px; color:var(--green-mid); margin-top:4px; font-weight:600;">📞 026-XXX-XXXX（月〜金 9:00-17:00）</div>
                 </div>
               </div>
@@ -2492,7 +2626,7 @@
                 <div class="fm-avatar">👩</div>
                 <div class="fm-info">
                   <div class="fm-name">田中 洋子さん</div>
-                  <div class="fm-relation">娘 / 長野市在住</div>
+                  <div class="fm-relation">娘 / 新宮市在住</div>
                   <div class="fm-notif"><span class="notif-on">📱 LINE通知 ON</span></div>
                 </div>
                 <button class="fm-btn" onclick="alert('洋子さんの通知設定を変更します。')">⚙️ 設定</button>
@@ -2615,6 +2749,39 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
+
+    // ===== EMERGENCY SOS =====
+    window.openSOS = function() {
+      document.getElementById('sosModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    };
+    window.closeSOS = function() {
+      document.getElementById('sosModal').classList.remove('open');
+      document.body.style.overflow = '';
+    };
+    window.sendSOSMessage = function() {
+      alert('🧑‍⚕️ サポートセンターに通知を送信しました。\nまもなく担当者よりご連絡いたします。');
+    };
+
+    // ===== NAVIGATE TO PAGE (callable from anywhere) =====
+    window.navigateTo = function(target) {
+      document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+      const navLink = document.querySelector(`nav a[data-page="${target}"]`);
+      if (navLink) navLink.classList.add('active');
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('page-' + target)?.classList.add('active');
+      const titles = {
+        home: '今日もよく歩いています！',
+        steps: '歩数・記録',
+        points: 'ポイント残高・履歴',
+        exchange: '野菜と交換',
+        checkup: '健康診断',
+        family: '家族へ共有'
+      };
+      const h2 = document.querySelector('.topbar-left h2');
+      if (h2 && titles[target]) h2.textContent = titles[target];
+      document.querySelector('.content').scrollTop = 0;
+    };
 
     // ===== PAGE NAVIGATION =====
     document.querySelectorAll('nav a[data-page]').forEach(link => {
