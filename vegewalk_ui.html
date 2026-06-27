@@ -1,0 +1,2685 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vege Ta Walk</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --green-dark:   #3a6b35;
+    --green-mid:    #5a9e50;
+    --green-light:  #a8d5a2;
+    --green-pale:   #edf7eb;
+    --earth:        #8b6914;
+    --earth-light:  #f5e9c8;
+    --orange:       #e07b3a;
+    --orange-light: #fdf0e6;
+    --red:          #c0392b;
+    --text-dark:    #2d3a2e;
+    --text-mid:     #4a5e4b;
+    --text-light:   #7a9a7e;
+    --bg:           #f7faf6;
+    --card-bg:      #ffffff;
+    --border:       #d6e8d4;
+    --shadow:       0 2px 12px rgba(58,107,53,0.10);
+    --shadow-lg:    0 4px 24px rgba(58,107,53,0.14);
+  }
+
+  body {
+    font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif;
+    background: var(--bg);
+    color: var(--text-dark);
+    min-height: 100vh;
+  }
+
+  /* ======== SIDEBAR ======== */
+  .layout { display: flex; min-height: 100vh; }
+
+  .sidebar {
+    width: 220px;
+    background: var(--green-dark);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0;
+    flex-shrink: 0;
+  }
+
+  .sidebar-logo {
+    width: 100%;
+    padding: 28px 20px 20px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+  }
+
+  .sidebar-logo .logo-icon {
+    font-size: 40px;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .sidebar-logo h1 {
+    color: #fff;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    line-height: 1.3;
+  }
+
+  .sidebar-logo .tagline {
+    color: var(--green-light);
+    font-size: 10px;
+    margin-top: 4px;
+    font-weight: 400;
+  }
+
+  .sidebar-user {
+    width: 100%;
+    padding: 20px 16px 16px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+  }
+
+  .user-avatar {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: var(--green-light);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    margin: 0 auto 10px;
+    border: 3px solid rgba(255,255,255,0.4);
+  }
+
+  .user-name {
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .user-sub {
+    color: var(--green-light);
+    font-size: 11px;
+    margin-top: 2px;
+  }
+
+  nav { width: 100%; padding: 16px 0; flex: 1; }
+
+  nav a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 22px;
+    color: rgba(255,255,255,0.75);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.18s;
+    border-left: 3px solid transparent;
+  }
+
+  nav a .nav-icon { font-size: 18px; }
+
+  nav a:hover {
+    background: rgba(255,255,255,0.10);
+    color: #fff;
+  }
+
+  nav a.active {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    border-left: 3px solid var(--green-light);
+    font-weight: 700;
+  }
+
+  .sidebar-bottom {
+    width: 100%;
+    padding: 16px;
+    border-top: 1px solid rgba(255,255,255,0.15);
+  }
+
+  .sidebar-bottom a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: rgba(255,255,255,0.6);
+    text-decoration: none;
+    font-size: 13px;
+    padding: 8px 6px;
+  }
+
+  /* ======== MAIN ======== */
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .topbar {
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .topbar-left h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--green-dark);
+  }
+
+  .topbar-left .date {
+    font-size: 13px;
+    color: var(--text-light);
+    margin-top: 1px;
+  }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .weather-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--green-pale);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 13px;
+    color: var(--green-dark);
+    font-weight: 500;
+  }
+
+  .notif-btn {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .notif-dot {
+    position: absolute;
+    top: 6px; right: 6px;
+    width: 8px; height: 8px;
+    background: var(--orange);
+    border-radius: 50%;
+    border: 2px solid #fff;
+  }
+
+  /* ======== CONTENT ======== */
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 28px 36px 36px;
+  }
+
+  /* ======== SUMMARY CARDS ======== */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 26px;
+  }
+
+  .sum-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 22px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .sum-card .s-label {
+    font-size: 12px;
+    color: var(--text-light);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .sum-card .s-val {
+    font-size: 34px;
+    font-weight: 800;
+    color: var(--green-dark);
+    line-height: 1;
+  }
+
+  .sum-card .s-unit {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-mid);
+    margin-left: 2px;
+  }
+
+  .sum-card .s-sub {
+    font-size: 12px;
+    color: var(--text-light);
+  }
+
+  .sum-card.highlight {
+    background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-mid) 100%);
+    border-color: var(--green-mid);
+  }
+
+  .sum-card.highlight .s-label { color: var(--green-light); }
+  .sum-card.highlight .s-val { color: #fff; }
+  .sum-card.highlight .s-unit { color: rgba(255,255,255,0.8); }
+  .sum-card.highlight .s-sub { color: rgba(255,255,255,0.7); }
+
+  .s-icon { font-size: 26px; }
+
+  /* ======== SECTION HEADERS ======== */
+  .sec-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--green-dark);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .sec-title .badge {
+    font-size: 11px;
+    background: var(--green-pale);
+    color: var(--green-mid);
+    border: 1px solid var(--green-light);
+    border-radius: 20px;
+    padding: 2px 10px;
+    font-weight: 600;
+  }
+
+  /* ======== MAIN GRID ======== */
+  .mid-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+    margin-bottom: 24px;
+  }
+
+  /* ======== STEP TRACKER ======== */
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 24px 26px;
+    box-shadow: var(--shadow);
+  }
+
+  /* Circular step progress */
+  .step-ring-wrap {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+  }
+
+  .step-ring {
+    flex-shrink: 0;
+    position: relative;
+    width: 140px; height: 140px;
+  }
+
+  .step-ring svg { transform: rotate(-90deg); }
+
+  .step-ring .ring-bg { fill: none; stroke: var(--green-pale); stroke-width: 12; }
+  .step-ring .ring-fg {
+    fill: none;
+    stroke: var(--green-mid);
+    stroke-width: 12;
+    stroke-linecap: round;
+    stroke-dasharray: 376;
+    stroke-dashoffset: 94; /* 75% done */
+    transition: stroke-dashoffset 1s ease;
+  }
+
+  .ring-center {
+    position: absolute;
+    inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 2px;
+  }
+
+  .ring-steps {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--green-dark);
+    line-height: 1;
+  }
+
+  .ring-label {
+    font-size: 11px;
+    color: var(--text-light);
+    font-weight: 500;
+  }
+
+  .step-detail { flex: 1; }
+
+  .step-detail .goal-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .step-detail .goal-label { font-size: 13px; color: var(--text-light); }
+  .step-detail .goal-val { font-size: 13px; font-weight: 700; color: var(--green-dark); }
+
+  .step-detail .mini-stat {
+    background: var(--green-pale);
+    border-radius: 10px;
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .mini-stat .ms-label { font-size: 12px; color: var(--text-mid); }
+  .mini-stat .ms-val { font-size: 16px; font-weight: 700; color: var(--green-dark); }
+
+  .step-bar-wrap { margin-top: 6px; }
+  .step-bar-label {
+    display: flex; justify-content: space-between;
+    font-size: 11px; color: var(--text-light); margin-bottom: 5px;
+  }
+
+  .step-bar {
+    height: 8px;
+    background: var(--green-pale);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .step-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, var(--green-light), var(--green-mid));
+  }
+
+  /* ======== POINT CARD ======== */
+  .point-hero {
+    background: linear-gradient(135deg, #2d5a28 0%, #4e8c45 60%, #6db362 100%);
+    border-radius: 14px;
+    padding: 20px 22px;
+    color: #fff;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .point-hero::after {
+    content: '🌿';
+    position: absolute;
+    right: 18px; top: 12px;
+    font-size: 52px;
+    opacity: 0.25;
+  }
+
+  .point-hero .ph-label { font-size: 12px; opacity: 0.8; letter-spacing: 0.08em; margin-bottom: 4px; }
+  .point-hero .ph-val { font-size: 44px; font-weight: 800; line-height: 1; }
+  .point-hero .ph-unit { font-size: 16px; opacity: 0.9; margin-left: 4px; }
+
+  .point-next {
+    margin-top: 12px;
+    font-size: 12px;
+    opacity: 0.85;
+  }
+
+  .point-next-bar {
+    height: 6px;
+    background: rgba(255,255,255,0.25);
+    border-radius: 99px;
+    margin-top: 6px;
+    overflow: hidden;
+  }
+
+  .point-next-fill {
+    height: 100%;
+    background: rgba(255,255,255,0.85);
+    border-radius: 99px;
+    width: 68%;
+  }
+
+  .point-history {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .ph-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    background: var(--green-pale);
+    border-radius: 10px;
+    font-size: 13px;
+  }
+
+  .ph-row .ph-ico { font-size: 18px; }
+  .ph-row .ph-desc { flex: 1; color: var(--text-mid); }
+  .ph-row .ph-pts { font-weight: 700; color: var(--green-dark); }
+  .ph-row .ph-date { font-size: 11px; color: var(--text-light); }
+
+  /* ======== BOTTOM GRID ======== */
+  .bot-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 22px;
+  }
+
+  /* ======== VEGETABLE EXCHANGE ======== */
+  .veg-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .veg-card {
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.18s;
+    position: relative;
+    background: var(--card-bg);
+  }
+
+  .veg-card:hover {
+    border-color: var(--green-mid);
+    box-shadow: 0 4px 16px rgba(90,158,80,0.18);
+    transform: translateY(-2px);
+  }
+
+  .veg-card.available { border-color: var(--green-light); }
+
+  .veg-card.locked { opacity: 0.6; cursor: not-allowed; }
+  .veg-card.locked:hover { transform: none; box-shadow: none; }
+
+  .veg-emoji { font-size: 38px; margin-bottom: 8px; display: block; }
+
+  .veg-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 3px;
+  }
+
+  .veg-farm {
+    font-size: 11px;
+    color: var(--text-light);
+    margin-bottom: 8px;
+  }
+
+  .veg-pts {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--earth-light);
+    border: 1px solid #e0c97a;
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--earth);
+  }
+
+  .veg-tag-new {
+    position: absolute;
+    top: 8px; right: 8px;
+    background: var(--orange);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 20px;
+  }
+
+  .veg-tag-low {
+    position: absolute;
+    top: 8px; right: 8px;
+    background: var(--red);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 20px;
+  }
+
+  /* ======== HEALTH CHECKUP ======== */
+  .checkup-list {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+  }
+
+  .checkup-item {
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--card-bg);
+  }
+
+  .checkup-item.upcoming {
+    border-color: var(--green-light);
+    background: var(--green-pale);
+  }
+
+  .ci-icon {
+    width: 42px; height: 42px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .ci-icon.green { background: var(--green-light); }
+  .ci-icon.orange { background: var(--orange-light); }
+  .ci-icon.blue { background: #e6f0fb; }
+
+  .ci-info { flex: 1; }
+
+  .ci-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 2px;
+  }
+
+  .ci-date {
+    font-size: 12px;
+    color: var(--text-light);
+  }
+
+  .ci-status {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 11px;
+    border-radius: 20px;
+  }
+
+  .ci-status.done { background: var(--green-pale); color: var(--green-dark); }
+  .ci-status.upcoming-s { background: var(--earth-light); color: var(--earth); }
+  .ci-status.notyet { background: #f2f2f2; color: #888; }
+
+  /* ======== WEEKLY BAR CHART ======== */
+  .week-chart {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 6px;
+    height: 80px;
+    padding: 0 4px;
+    margin-top: 14px;
+  }
+
+  .wc-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .wc-bar-wrap {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .wc-bar {
+    width: 100%;
+    border-radius: 5px 5px 0 0;
+    background: var(--green-light);
+    transition: height 0.5s ease;
+  }
+
+  .wc-bar.today { background: var(--green-mid); }
+
+  .wc-day {
+    font-size: 11px;
+    color: var(--text-light);
+    font-weight: 500;
+  }
+
+  .wc-day.today-label { color: var(--green-dark); font-weight: 700; }
+
+  /* ======== CTA BUTTON ======== */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--green-mid);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.18s;
+    font-family: inherit;
+    text-decoration: none;
+  }
+
+  .btn-primary:hover { background: var(--green-dark); }
+
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    color: var(--green-mid);
+    border: 1.5px solid var(--green-light);
+    border-radius: 10px;
+    padding: 9px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s;
+    font-family: inherit;
+    text-decoration: none;
+  }
+
+  .btn-ghost:hover {
+    background: var(--green-pale);
+    border-color: var(--green-mid);
+  }
+
+  .sec-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+
+  /* ======== STEP MODAL PANEL ======== */
+  .motivate-banner {
+    background: linear-gradient(90deg, var(--earth-light), #fffbe8);
+    border: 1.5px solid #e0c97a;
+    border-radius: 12px;
+    padding: 13px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 22px;
+  }
+
+  .mb-icon { font-size: 24px; }
+  .mb-text { flex: 1; }
+  .mb-text strong { font-size: 14px; color: var(--earth); display: block; }
+  .mb-text span { font-size: 12px; color: #7a6a30; }
+  .mb-close { font-size: 18px; cursor: pointer; color: #aaa; }
+
+  /* ======== PAGE SWITCHING ======== */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ======== STEPS PAGE ======== */
+  .steps-hero {
+    background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-mid) 100%);
+    border-radius: 18px;
+    padding: 28px 32px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    margin-bottom: 24px;
+  }
+
+  .steps-hero-ring {
+    flex-shrink: 0;
+    position: relative;
+    width: 160px; height: 160px;
+  }
+
+  .steps-hero-ring svg { transform: rotate(-90deg); }
+
+  .steps-hero-ring .ring-bg2 { fill: none; stroke: rgba(255,255,255,0.2); stroke-width: 14; }
+  .steps-hero-ring .ring-fg2 {
+    fill: none;
+    stroke: #fff;
+    stroke-width: 14;
+    stroke-linecap: round;
+    stroke-dasharray: 439.8;
+    stroke-dashoffset: 110; /* 8432/10000 = 84.32% */
+  }
+
+  .steps-hero-ring .ring-center2 {
+    position: absolute;
+    inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+
+  .steps-hero-ring .ring-steps2 {
+    font-size: 30px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1;
+  }
+
+  .steps-hero-ring .ring-label2 {
+    font-size: 12px;
+    color: rgba(255,255,255,0.8);
+    margin-top: 4px;
+  }
+
+  .steps-hero-info { flex: 1; }
+  .steps-hero-info h3 { font-size: 20px; font-weight: 700; margin-bottom: 16px; }
+
+  .steps-stat-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 16px;
+  }
+
+  .steps-stat-item {
+    flex: 1;
+    background: rgba(255,255,255,0.15);
+    border-radius: 12px;
+    padding: 12px 16px;
+    text-align: center;
+  }
+
+  .steps-stat-item .ssi-val { font-size: 22px; font-weight: 800; }
+  .steps-stat-item .ssi-label { font-size: 11px; opacity: 0.8; margin-top: 2px; }
+
+  .steps-progress-label {
+    font-size: 13px;
+    opacity: 0.85;
+    margin-bottom: 8px;
+  }
+
+  .steps-progress-bar {
+    height: 10px;
+    background: rgba(255,255,255,0.25);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .steps-progress-fill {
+    height: 100%;
+    background: #fff;
+    border-radius: 99px;
+  }
+
+  /* Weekly chart large */
+  .week-chart-lg {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 8px;
+    height: 120px;
+    padding: 0 4px;
+    margin-top: 14px;
+    margin-bottom: 8px;
+  }
+
+  .wc-col-lg {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    height: 100%;
+  }
+
+  .wc-bar-wrap-lg {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .wc-bar-lg {
+    width: 100%;
+    border-radius: 6px 6px 0 0;
+    background: var(--green-light);
+    transition: height 0.5s ease;
+    position: relative;
+  }
+
+  .wc-bar-lg.today-bar { background: var(--green-mid); }
+
+  .wc-val {
+    font-size: 10px;
+    color: var(--text-light);
+    font-weight: 600;
+    position: absolute;
+    top: -16px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+  }
+
+  .wc-day-lg {
+    font-size: 12px;
+    color: var(--text-light);
+    font-weight: 500;
+  }
+
+  .wc-day-lg.today-lbl { color: var(--green-dark); font-weight: 700; }
+
+  /* Data table */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  .data-table th {
+    background: var(--green-pale);
+    color: var(--green-dark);
+    font-weight: 700;
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+  }
+
+  .data-table th:first-child { border-radius: 8px 0 0 8px; }
+  .data-table th:last-child { border-radius: 0 8px 8px 0; }
+
+  .data-table td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-mid);
+  }
+
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr.today-row td { background: #f0faf0; font-weight: 600; color: var(--green-dark); }
+
+  .monthly-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-top: 16px;
+  }
+
+  .mstat-card {
+    background: var(--green-pale);
+    border: 1px solid var(--green-light);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .mstat-val { font-size: 22px; font-weight: 800; color: var(--green-dark); line-height: 1.2; }
+  .mstat-label { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+
+  /* ======== POINTS PAGE ======== */
+  .points-hero-wrap {
+    background: linear-gradient(135deg, #2d5a28 0%, #4e8c45 60%, #6db362 100%);
+    border-radius: 18px;
+    padding: 28px 32px;
+    color: #fff;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .points-hero-wrap::after {
+    content: '🌿';
+    position: absolute;
+    right: 24px; top: 16px;
+    font-size: 80px;
+    opacity: 0.15;
+  }
+
+  .ph-balance-label { font-size: 14px; opacity: 0.85; margin-bottom: 6px; }
+  .ph-balance-val { font-size: 64px; font-weight: 800; line-height: 1; }
+  .ph-balance-unit { font-size: 22px; opacity: 0.9; margin-left: 6px; }
+  .ph-next-msg { font-size: 15px; opacity: 0.9; margin-top: 14px; }
+
+  .ph-next-bar2 {
+    height: 10px;
+    background: rgba(255,255,255,0.25);
+    border-radius: 99px;
+    margin-top: 8px;
+    overflow: hidden;
+  }
+
+  .ph-next-fill2 {
+    height: 100%;
+    background: rgba(255,255,255,0.9);
+    border-radius: 99px;
+  }
+
+  .points-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+    margin-bottom: 22px;
+  }
+
+  .rules-card {
+    background: var(--earth-light);
+    border: 1.5px solid #e0c97a;
+    border-radius: 14px;
+    padding: 20px 22px;
+  }
+
+  .rules-card .rc-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--earth);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .rule-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(139,105,20,0.15);
+    font-size: 13px;
+    color: #5a4a1a;
+  }
+
+  .rule-item:last-child { border-bottom: none; }
+  .rule-item .ri-ico { font-size: 20px; flex-shrink: 0; }
+  .rule-item .ri-pts { font-weight: 700; color: var(--earth); margin-left: auto; font-size: 15px; }
+
+  /* ======== EXCHANGE PAGE ======== */
+  .exchange-balance-bar {
+    background: var(--earth-light);
+    border: 1.5px solid #e0c97a;
+    border-radius: 12px;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 22px;
+    font-size: 15px;
+  }
+
+  .exchange-balance-bar .eb-pts {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--earth);
+  }
+
+  .exchange-balance-bar .eb-label { color: var(--text-mid); }
+
+  .exchange-veg-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .exveg-card {
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 16px;
+    text-align: center;
+    background: var(--card-bg);
+    position: relative;
+    transition: all 0.18s;
+  }
+
+  .exveg-card:hover {
+    border-color: var(--green-mid);
+    box-shadow: 0 4px 16px rgba(90,158,80,0.18);
+    transform: translateY(-2px);
+  }
+
+  .exveg-emoji { font-size: 48px; display: block; margin-bottom: 10px; }
+  .exveg-name { font-size: 15px; font-weight: 700; color: var(--text-dark); margin-bottom: 4px; }
+  .exveg-qty { font-size: 12px; color: var(--text-light); margin-bottom: 10px; }
+
+  .exveg-pts-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--earth-light);
+    border: 1px solid #e0c97a;
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--earth);
+    margin-bottom: 10px;
+  }
+
+  .exveg-stock { font-size: 12px; color: var(--text-light); margin-bottom: 12px; }
+  .exveg-stock.low-stock { color: var(--red); font-weight: 700; }
+
+  .exveg-btn {
+    display: block;
+    width: 100%;
+    background: var(--green-mid);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 9px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.18s;
+  }
+
+  .exveg-btn:hover { background: var(--green-dark); }
+
+  .exveg-tag-new {
+    position: absolute;
+    top: 10px; right: 10px;
+    background: var(--orange);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+  }
+
+  .exveg-tag-low {
+    position: absolute;
+    top: 10px; left: 10px;
+    background: var(--red);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+  }
+
+  .pickup-card {
+    background: #e6f0fb;
+    border: 1.5px solid #a8c8f0;
+    border-radius: 14px;
+    padding: 18px 22px;
+    margin-top: 6px;
+  }
+
+  .pickup-card .pc-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a4a8a;
+    margin-bottom: 10px;
+  }
+
+  /* ======== CHECKUP PAGE ======== */
+  .checkup-next-card {
+    background: linear-gradient(135deg, #1a4a8a 0%, #2d6cc4 100%);
+    border-radius: 18px;
+    padding: 24px 28px;
+    color: #fff;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .checkup-next-card .cnc-icon { font-size: 52px; flex-shrink: 0; }
+
+  .checkup-next-card .cnc-info h3 { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+  .checkup-next-card .cnc-info .cnc-date { font-size: 15px; opacity: 0.9; margin-bottom: 4px; }
+  .checkup-next-card .cnc-info .cnc-loc { font-size: 13px; opacity: 0.75; }
+
+  .checkup-next-card .cnc-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #fff;
+    color: #1a4a8a;
+    border: none;
+    border-radius: 10px;
+    padding: 11px 20px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    margin-top: 12px;
+    text-decoration: none;
+    transition: background 0.18s;
+  }
+
+  .checkup-next-card .cnc-btn:hover { background: #f0f4ff; }
+
+  .checkup-page-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 22px;
+    margin-bottom: 22px;
+  }
+
+  .results-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  .results-table th {
+    background: #e6f0fb;
+    color: #1a4a8a;
+    font-weight: 700;
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 12px;
+  }
+
+  .results-table th:first-child { border-radius: 8px 0 0 8px; }
+  .results-table th:last-child { border-radius: 0 8px 8px 0; }
+
+  .results-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-mid);
+  }
+
+  .results-table tr:last-child td { border-bottom: none; }
+
+  .badge-good {
+    display: inline-block;
+    background: var(--green-pale);
+    color: var(--green-dark);
+    border: 1px solid var(--green-light);
+    border-radius: 20px;
+    padding: 2px 10px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .trend-bar-wrap { margin-bottom: 10px; }
+  .trend-bar-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-mid); margin-bottom: 4px; }
+  .trend-bar-track { height: 10px; background: var(--green-pale); border-radius: 99px; overflow: hidden; }
+  .trend-bar-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--green-light), var(--green-mid)); }
+  .trend-bar-fill.blue-fill { background: linear-gradient(90deg, #a8c8f0, #2d6cc4); }
+
+  .checklist-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+    color: var(--text-mid);
+  }
+
+  .checklist-item:last-child { border-bottom: none; }
+  .checklist-item .ci-check { font-size: 18px; flex-shrink: 0; }
+
+  /* ======== FAMILY PAGE ======== */
+  .family-member-card {
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--card-bg);
+    margin-bottom: 12px;
+  }
+
+  .fm-avatar {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: var(--green-light);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+    flex-shrink: 0;
+  }
+
+  .fm-info { flex: 1; }
+  .fm-name { font-size: 16px; font-weight: 700; color: var(--text-dark); }
+  .fm-relation { font-size: 13px; color: var(--text-light); margin-top: 2px; }
+  .fm-notif { font-size: 13px; margin-top: 4px; }
+  .notif-on { color: var(--green-mid); font-weight: 600; }
+  .notif-off { color: #aaa; }
+
+  .fm-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: transparent;
+    color: var(--green-mid);
+    border: 1.5px solid var(--green-light);
+    border-radius: 8px;
+    padding: 7px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .share-settings-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 22px;
+  }
+
+  .share-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    background: var(--green-pale);
+    border: 1px solid var(--green-light);
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-dark);
+  }
+
+  .share-status-on {
+    background: var(--green-mid);
+    color: #fff;
+    border-radius: 20px;
+    padding: 3px 12px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .share-status-off {
+    background: #e0e0e0;
+    color: #888;
+    border-radius: 20px;
+    padding: 3px 12px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .notif-log-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+
+  .notif-log-item:last-child { border-bottom: none; }
+  .nli-time { color: var(--text-light); flex-shrink: 0; min-width: 90px; }
+  .nli-msg { color: var(--text-mid); flex: 1; }
+  .nli-to { color: var(--green-mid); font-weight: 600; }
+
+  .msg-textarea {
+    width: 100%;
+    height: 90px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--text-dark);
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.18s;
+  }
+
+  .msg-textarea:focus { border-color: var(--green-mid); }
+
+  .emergency-card {
+    background: #fef0f0;
+    border: 1.5px solid #f5a0a0;
+    border-radius: 14px;
+    padding: 18px 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 6px;
+  }
+
+  .emergency-card .ec-icon { font-size: 36px; flex-shrink: 0; }
+  .emergency-card .ec-info { flex: 1; }
+  .emergency-card .ec-title { font-size: 15px; font-weight: 700; color: #c0392b; margin-bottom: 4px; }
+  .emergency-card .ec-sub { font-size: 13px; color: #8a4040; }
+
+  .toggle-switch {
+    position: relative;
+    width: 52px;
+    height: 28px;
+    flex-shrink: 0;
+  }
+
+  .toggle-switch input { opacity: 0; width: 0; height: 0; }
+
+  .toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background: #ccc;
+    border-radius: 99px;
+    transition: 0.3s;
+  }
+
+  .toggle-slider:before {
+    content: '';
+    position: absolute;
+    width: 22px; height: 22px;
+    left: 3px; top: 3px;
+    background: #fff;
+    border-radius: 50%;
+    transition: 0.3s;
+  }
+
+  .toggle-switch input:checked + .toggle-slider { background: var(--green-mid); }
+  .toggle-switch input:checked + .toggle-slider:before { transform: translateX(24px); }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <span class="logo-icon">🥦</span>
+      <h1>Vege Ta Walk</h1>
+      <div class="tagline">歩いて、健康に、おいしく</div>
+    </div>
+
+    <div class="sidebar-user">
+      <div class="user-avatar">👴</div>
+      <div class="user-name">田中 正雄さん</div>
+      <div class="user-sub">📍 長野市 / 75歳</div>
+    </div>
+
+    <nav>
+      <a href="#" class="active" data-page="home">
+        <span class="nav-icon">🏠</span> ホーム
+      </a>
+      <a href="#" data-page="steps">
+        <span class="nav-icon">👟</span> 歩数・記録
+      </a>
+      <a href="#" data-page="points">
+        <span class="nav-icon">🎯</span> ポイント
+      </a>
+      <a href="#" data-page="exchange">
+        <span class="nav-icon">🥕</span> 野菜と交換
+      </a>
+      <a href="#" data-page="checkup">
+        <span class="nav-icon">🏥</span> 健康診断
+      </a>
+      <a href="#" data-page="family">
+        <span class="nav-icon">👨‍👩‍👧</span> 家族へ共有
+      </a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <a href="#">⚙️ 設定</a>
+      <a href="#">❓ ヘルプ</a>
+    </div>
+  </aside>
+
+  <!-- ===== MAIN ===== -->
+  <div class="main">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <h2>今日もよく歩いています！</h2>
+        <div class="date">2026年6月28日（日）</div>
+      </div>
+      <div class="topbar-right">
+        <div class="weather-badge">
+          ☀️ 晴れ 24°C　歩きやすい天気です
+        </div>
+        <div class="notif-btn">
+          🔔
+          <span class="notif-dot"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- ===== PAGE: HOME ===== -->
+      <div class="page active" id="page-home">
+
+      <!-- MOTIVATE BANNER -->
+      <div class="motivate-banner">
+        <span class="mb-icon">🎉</span>
+        <div class="mb-text">
+          <strong>今週の目標まであと 2,500歩！ がんばりましょう</strong>
+          <span>今日の歩行で 15ポイント 獲得しました。次の野菜交換まであと 82ポイント。</span>
+        </div>
+        <span class="mb-close">✕</span>
+      </div>
+
+      <!-- SUMMARY CARDS -->
+      <div class="summary-grid">
+        <div class="sum-card highlight">
+          <span class="s-icon">👟</span>
+          <div class="s-label">今日の歩数</div>
+          <div><span class="s-val">7,512</span><span class="s-unit">歩</span></div>
+          <div class="s-sub">目標 10,000歩 の 75%</div>
+        </div>
+
+        <div class="sum-card">
+          <span class="s-icon">📍</span>
+          <div class="s-label">歩行距離</div>
+          <div><span class="s-val">5.2</span><span class="s-unit">km</span></div>
+          <div class="s-sub">昨日より +0.8km</div>
+        </div>
+
+        <div class="sum-card">
+          <span class="s-icon">🌟</span>
+          <div class="s-label">保有ポイント</div>
+          <div><span class="s-val">418</span><span class="s-unit">pt</span></div>
+          <div class="s-sub">今月獲得 +68pt</div>
+        </div>
+
+        <div class="sum-card">
+          <span class="s-icon">🔥</span>
+          <div class="s-label">消費カロリー</div>
+          <div><span class="s-val">248</span><span class="s-unit">kcal</span></div>
+          <div class="s-sub">脂肪燃焼 良好</div>
+        </div>
+      </div>
+
+      <!-- MID GRID: Step tracker + Points -->
+      <div class="mid-grid">
+
+        <!-- Step tracker card -->
+        <div class="card">
+          <div class="sec-title">
+            👟 本日の歩行トラッカー
+            <span class="badge">LIVE</span>
+          </div>
+
+          <div class="step-ring-wrap">
+            <!-- Circular ring -->
+            <div class="step-ring">
+              <svg width="140" height="140" viewBox="0 0 140 140">
+                <circle class="ring-bg" cx="70" cy="70" r="60"/>
+                <circle class="ring-fg" cx="70" cy="70" r="60"/>
+              </svg>
+              <div class="ring-center">
+                <div class="ring-steps">7,512</div>
+                <div class="ring-label">/ 10,000歩</div>
+              </div>
+            </div>
+
+            <!-- Detail -->
+            <div class="step-detail">
+              <div class="goal-row">
+                <span class="goal-label">今日の目標</span>
+                <span class="goal-val">10,000歩</span>
+              </div>
+              <div class="goal-row">
+                <span class="goal-label">残り歩数</span>
+                <span class="goal-val" style="color: var(--orange);">2,488歩</span>
+              </div>
+
+              <div class="mini-stat">
+                <span class="ms-label">⏱ 歩行時間</span>
+                <span class="ms-val">1時間 22分</span>
+              </div>
+
+              <div class="step-bar-wrap">
+                <div class="step-bar-label">
+                  <span>歩数進捗</span>
+                  <span>75%</span>
+                </div>
+                <div class="step-bar">
+                  <div class="step-bar-fill" style="width:75%"></div>
+                </div>
+              </div>
+
+              <div style="margin-top:16px;">
+                <a href="#" class="btn-primary">📲 歩数を更新</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Weekly Bar Chart -->
+          <div style="margin-top: 22px; border-top: 1px solid var(--border); padding-top: 16px;">
+            <div class="sec-title" style="font-size:14px; margin-bottom:0;">今週の歩数</div>
+            <div class="week-chart">
+              <!-- Mon -->
+              <div class="wc-col">
+                <div class="wc-bar-wrap">
+                  <div class="wc-bar" style="height:64px"></div>
+                </div>
+                <div class="wc-day">月</div>
+              </div>
+              <!-- Tue -->
+              <div class="wc-col">
+                <div class="wc-bar-wrap">
+                  <div class="wc-bar" style="height:48px"></div>
+                </div>
+                <div class="wc-day">火</div>
+              </div>
+              <!-- Wed -->
+              <div class="wc-col">
+                <div class="wc-bar-wrap">
+                  <div class="wc-bar" style="height:72px"></div>
+                </div>
+                <div class="wc-day">水</div>
+              </div>
+              <!-- Thu -->
+              <div class="wc-col">
+                <div class="wc-bar-wrap">
+                  <div class="wc-bar" style="height:56px"></div>
+                </div>
+                <div class="wc-day">木</div>
+              </div>
+              <!-- Fri -->
+              <div class="wc-col">
+                <div class="wc-bar-wrap">
+                  <div class="wc-bar" style="height:68px"></div>
+                </div>
+                <div class="wc-day">金</div>
+              </div>
+              <!-- Sat -->
+              <div class="wc-col">
+                <div class="wc-bar-wrap">
+                  <div class="wc-bar" style="height:40px"></div>
+                </div>
+                <div class="wc-day">土</div>
+              </div>
+              <!-- Sun (today) -->
+              <div class="wc-col">
+                <div class="wc-bar-wrap">
+                  <div class="wc-bar today" style="height:60px"></div>
+                </div>
+                <div class="wc-day today-label">今日</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Points card -->
+        <div class="card">
+          <div class="sec-title">🌟 ポイント状況</div>
+
+          <div class="point-hero">
+            <div class="ph-label">現在の保有ポイント</div>
+            <div>
+              <span class="ph-val">418</span>
+              <span class="ph-unit">ポイント</span>
+            </div>
+            <div class="point-next">
+              次の交換まで あと <strong>82pt</strong>（目標 500pt）
+              <div class="point-next-bar">
+                <div class="point-next-fill"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sec-title" style="font-size:14px; margin-top:4px;">最近の獲得履歴</div>
+          <div class="point-history">
+            <div class="ph-row">
+              <span class="ph-ico">🏃</span>
+              <span class="ph-desc">歩行達成（7,500歩）</span>
+              <span class="ph-pts">+15pt</span>
+              <span class="ph-date">今日</span>
+            </div>
+            <div class="ph-row">
+              <span class="ph-ico">🏥</span>
+              <span class="ph-desc">健康診断参加ボーナス</span>
+              <span class="ph-pts">+50pt</span>
+              <span class="ph-date">6/21</span>
+            </div>
+            <div class="ph-row">
+              <span class="ph-ico">🏃</span>
+              <span class="ph-desc">週間目標達成ボーナス</span>
+              <span class="ph-pts">+20pt</span>
+              <span class="ph-date">6/20</span>
+            </div>
+            <div class="ph-row">
+              <span class="ph-ico">🏃</span>
+              <span class="ph-desc">歩行達成（10,000歩）</span>
+              <span class="ph-pts">+20pt</span>
+              <span class="ph-date">6/19</span>
+            </div>
+          </div>
+
+          <div style="margin-top: 16px; text-align: center;">
+            <a href="#" class="btn-ghost" style="width:100%; justify-content:center;">📋 全履歴を見る</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTTOM GRID: Vegetable exchange + Health checkup -->
+      <div class="bot-grid">
+
+        <!-- Vegetable Exchange -->
+        <div class="card">
+          <div class="sec-header">
+            <div class="sec-title" style="margin-bottom:0">🥕 野菜と交換しよう</div>
+            <a href="#" class="btn-ghost">一覧を見る →</a>
+          </div>
+
+          <div style="font-size:12px; color:var(--text-light); margin-bottom:14px;">
+            ⭐ 現在 <strong style="color:var(--earth)">418pt</strong> 保有中 ／ 農家から提供された規格外野菜と交換できます
+          </div>
+
+          <div class="veg-grid">
+            <div class="veg-card available">
+              <span class="veg-tag-new">NEW</span>
+              <span class="veg-emoji">🍅</span>
+              <div class="veg-name">トマト（規格外）</div>
+              <div class="veg-farm">山田農園・長野市</div>
+              <div class="veg-pts">🌟 200pt</div>
+            </div>
+
+            <div class="veg-card available">
+              <span class="veg-emoji">🥦</span>
+              <div class="veg-name">ブロッコリー</div>
+              <div class="veg-farm">鈴木農場・長野市</div>
+              <div class="veg-pts">🌟 150pt</div>
+            </div>
+
+            <div class="veg-card available">
+              <span class="veg-tag-low">残り3</span>
+              <span class="veg-emoji">🥕</span>
+              <div class="veg-name">人参（まがり）</div>
+              <div class="veg-farm">田村農園・飯田市</div>
+              <div class="veg-pts">🌟 100pt</div>
+            </div>
+
+            <div class="veg-card available">
+              <span class="veg-emoji">🍆</span>
+              <div class="veg-name">なす（大玉）</div>
+              <div class="veg-farm">小林農家・松本市</div>
+              <div class="veg-pts">🌟 120pt</div>
+            </div>
+
+            <div class="veg-card locked">
+              <span class="veg-emoji">🌽</span>
+              <div class="veg-name">とうもろこし</div>
+              <div class="veg-farm">高橋農場・長野市</div>
+              <div class="veg-pts">🌟 500pt</div>
+            </div>
+
+            <div class="veg-card locked">
+              <span class="veg-emoji">🍠</span>
+              <div class="veg-name">さつまいも</div>
+              <div class="veg-farm">中村農園・上田市</div>
+              <div class="veg-pts">🌟 350pt</div>
+            </div>
+          </div>
+
+          <div style="margin-top: 16px; display:flex; gap: 10px;">
+            <a href="#" class="btn-primary">🛒 交換手続きへ</a>
+            <span style="font-size:12px; color:var(--text-light); align-self:center;">
+              ※交換は健康診断時に会場で行えます
+            </span>
+          </div>
+        </div>
+
+        <!-- Health Checkup -->
+        <div class="card">
+          <div class="sec-title">🏥 健康診断</div>
+
+          <div class="checkup-list">
+            <div class="checkup-item upcoming">
+              <div class="ci-icon orange">📋</div>
+              <div class="ci-info">
+                <div class="ci-name">特定健診 2026年度</div>
+                <div class="ci-date">📅 7月12日（土）9:00〜 長野市民会館</div>
+              </div>
+              <span class="ci-status upcoming-s">予定あり</span>
+            </div>
+
+            <div class="checkup-item">
+              <div class="ci-icon green">✅</div>
+              <div class="ci-info">
+                <div class="ci-name">血圧・体重測定会</div>
+                <div class="ci-date">📅 6月21日（土）10:00〜</div>
+              </div>
+              <span class="ci-status done">参加済み</span>
+            </div>
+
+            <div class="checkup-item">
+              <div class="ci-icon blue">🔬</div>
+              <div class="ci-info">
+                <div class="ci-name">骨密度検査</div>
+                <div class="ci-date">📅 5月17日（土）</div>
+              </div>
+              <span class="ci-status done">参加済み</span>
+            </div>
+
+            <div class="checkup-item">
+              <div class="ci-icon" style="background:#fce8e8">❓</div>
+              <div class="ci-info">
+                <div class="ci-name">眼科検診（推奨）</div>
+                <div class="ci-date">📅 8月以降 予定</div>
+              </div>
+              <span class="ci-status notyet">未参加</span>
+            </div>
+          </div>
+
+          <div style="margin-top:16px; padding: 14px 16px; background: var(--earth-light); border-radius: 12px; border: 1px solid #e0c97a;">
+            <div style="font-size: 13px; font-weight:700; color: var(--earth); margin-bottom: 4px;">
+              🌟 健診参加でポイントがもらえます！
+            </div>
+            <div style="font-size: 12px; color: #7a6a30;">
+              次回の特定健診参加で <strong>+50pt</strong> プラス野菜交換券が発行されます。
+            </div>
+          </div>
+
+          <div style="margin-top: 14px;">
+            <a href="#" class="btn-primary" style="width:100%; justify-content:center;">📆 健診スケジュールを見る</a>
+          </div>
+        </div>
+      </div>
+
+      </div><!-- /page-home -->
+
+      <!-- ===== PAGE: STEPS ===== -->
+      <div class="page" id="page-steps">
+
+        <!-- Hero: today's steps -->
+        <div class="steps-hero">
+          <div class="steps-hero-ring">
+            <svg width="160" height="160" viewBox="0 0 160 160">
+              <circle class="ring-bg2" cx="80" cy="80" r="70"/>
+              <circle class="ring-fg2" cx="80" cy="80" r="70"/>
+            </svg>
+            <div class="ring-center2">
+              <div class="ring-steps2">8,432</div>
+              <div class="ring-label2">/ 10,000歩</div>
+            </div>
+          </div>
+          <div class="steps-hero-info">
+            <h3>👟 今日の歩数　84%達成！</h3>
+            <div class="steps-stat-row">
+              <div class="steps-stat-item">
+                <div class="ssi-val">5.9km</div>
+                <div class="ssi-label">歩行距離</div>
+              </div>
+              <div class="steps-stat-item">
+                <div class="ssi-val">278kcal</div>
+                <div class="ssi-label">消費カロリー</div>
+              </div>
+              <div class="steps-stat-item">
+                <div class="ssi-val">1h38m</div>
+                <div class="ssi-label">歩行時間</div>
+              </div>
+            </div>
+            <div class="steps-progress-label">目標まであと <strong>1,568歩</strong></div>
+            <div class="steps-progress-bar">
+              <div class="steps-progress-fill" style="width:84.32%"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Weekly bar chart + table -->
+        <div class="mid-grid">
+
+          <!-- Weekly chart card -->
+          <div class="card">
+            <div class="sec-title">📊 今週の歩数グラフ</div>
+            <div class="week-chart-lg" style="position:relative;">
+              <div class="wc-col-lg">
+                <div class="wc-bar-wrap-lg">
+                  <div class="wc-bar-lg" style="height:66%">
+                    <span class="wc-val">6,820</span>
+                  </div>
+                </div>
+                <div class="wc-day-lg">月</div>
+              </div>
+              <div class="wc-col-lg">
+                <div class="wc-bar-wrap-lg">
+                  <div class="wc-bar-lg" style="height:93%">
+                    <span class="wc-val">9,340</span>
+                  </div>
+                </div>
+                <div class="wc-day-lg">火</div>
+              </div>
+              <div class="wc-col-lg">
+                <div class="wc-bar-wrap-lg">
+                  <div class="wc-bar-lg" style="height:72%">
+                    <span class="wc-val">7,210</span>
+                  </div>
+                </div>
+                <div class="wc-day-lg">水</div>
+              </div>
+              <div class="wc-col-lg">
+                <div class="wc-bar-wrap-lg">
+                  <div class="wc-bar-lg" style="height:81%">
+                    <span class="wc-val">8,100</span>
+                  </div>
+                </div>
+                <div class="wc-day-lg">木</div>
+              </div>
+              <div class="wc-col-lg">
+                <div class="wc-bar-wrap-lg">
+                  <div class="wc-bar-lg" style="height:54%">
+                    <span class="wc-val">5,430</span>
+                  </div>
+                </div>
+                <div class="wc-day-lg">金</div>
+              </div>
+              <div class="wc-col-lg">
+                <div class="wc-bar-wrap-lg">
+                  <div class="wc-bar-lg" style="height:99%">
+                    <span class="wc-val">9,870</span>
+                  </div>
+                </div>
+                <div class="wc-day-lg">土</div>
+              </div>
+              <div class="wc-col-lg">
+                <div class="wc-bar-wrap-lg">
+                  <div class="wc-bar-lg today-bar" style="height:84%">
+                    <span class="wc-val">8,432</span>
+                  </div>
+                </div>
+                <div class="wc-day-lg today-lbl">今日</div>
+              </div>
+            </div>
+            <div style="text-align:center; font-size:12px; color:var(--text-light); margin-top:4px;">
+              今週合計 <strong style="color:var(--green-dark)">54,814歩</strong>　平均 <strong style="color:var(--green-dark)">7,830歩/日</strong>
+            </div>
+          </div>
+
+          <!-- Monthly totals -->
+          <div class="card">
+            <div class="sec-title">📅 今月の合計</div>
+            <div class="monthly-stats-grid" style="grid-template-columns: repeat(2,1fr);">
+              <div class="mstat-card">
+                <div class="mstat-val">182,340</div>
+                <div class="mstat-label">合計歩数（歩）</div>
+              </div>
+              <div class="mstat-card">
+                <div class="mstat-val">128.4km</div>
+                <div class="mstat-label">合計距離</div>
+              </div>
+              <div class="mstat-card">
+                <div class="mstat-val">6,840</div>
+                <div class="mstat-label">消費カロリー（kcal）</div>
+              </div>
+              <div class="mstat-card">
+                <div class="mstat-val">89pt</div>
+                <div class="mstat-label">今月獲得ポイント</div>
+              </div>
+            </div>
+            <div style="margin-top:18px; padding:14px 16px; background:var(--earth-light); border-radius:12px; border:1px solid #e0c97a;">
+              <div style="font-size:13px; font-weight:700; color:var(--earth);">🏆 今月の達成状況</div>
+              <div style="font-size:12px; color:#7a6a30; margin-top:6px; line-height:1.7;">
+                目標達成日数: <strong>18日 / 28日</strong><br>
+                週5日連続達成: <strong>2回</strong>（ボーナス +40pt）<br>
+                月間ベスト: <strong>9,870歩</strong>（6/27 土）
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Daily record table -->
+        <div class="card">
+          <div class="sec-title">🗓 直近7日間の記録</div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>日付</th>
+                <th>歩数</th>
+                <th>距離</th>
+                <th>カロリー</th>
+                <th>獲得ポイント</th>
+                <th>達成率</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="today-row">
+                <td>6/28（日）今日</td>
+                <td>8,432歩</td>
+                <td>5.9km</td>
+                <td>278kcal</td>
+                <td>+15pt</td>
+                <td>84%</td>
+              </tr>
+              <tr>
+                <td>6/27（土）</td>
+                <td>9,870歩</td>
+                <td>6.9km</td>
+                <td>325kcal</td>
+                <td>+20pt</td>
+                <td>99%</td>
+              </tr>
+              <tr>
+                <td>6/26（金）</td>
+                <td>5,430歩</td>
+                <td>3.8km</td>
+                <td>179kcal</td>
+                <td>+5pt</td>
+                <td>54%</td>
+              </tr>
+              <tr>
+                <td>6/25（木）</td>
+                <td>8,100歩</td>
+                <td>5.7km</td>
+                <td>267kcal</td>
+                <td>+12pt</td>
+                <td>81%</td>
+              </tr>
+              <tr>
+                <td>6/24（水）</td>
+                <td>7,210歩</td>
+                <td>5.0km</td>
+                <td>237kcal</td>
+                <td>+10pt</td>
+                <td>72%</td>
+              </tr>
+              <tr>
+                <td>6/23（火）</td>
+                <td>9,340歩</td>
+                <td>6.5km</td>
+                <td>308kcal</td>
+                <td>+18pt</td>
+                <td>93%</td>
+              </tr>
+              <tr>
+                <td>6/22（月）</td>
+                <td>6,820歩</td>
+                <td>4.8km</td>
+                <td>225kcal</td>
+                <td>+8pt</td>
+                <td>68%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div><!-- /page-steps -->
+
+      <!-- ===== PAGE: POINTS ===== -->
+      <div class="page" id="page-points">
+
+        <!-- Balance hero -->
+        <div class="points-hero-wrap">
+          <div class="ph-balance-label">🌟 現在の保有ポイント</div>
+          <div>
+            <span class="ph-balance-val">247</span>
+            <span class="ph-balance-unit">pt</span>
+          </div>
+          <div class="ph-next-msg">あと <strong>53pt</strong> で野菜1品と交換できます（目標 300pt）</div>
+          <div class="ph-next-bar2">
+            <div class="ph-next-fill2" style="width: 82.3%"></div>
+          </div>
+        </div>
+
+        <div class="points-grid">
+
+          <!-- Earning history -->
+          <div class="card">
+            <div class="sec-title">📈 ポイント獲得履歴</div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>日付</th>
+                  <th>内容</th>
+                  <th>獲得</th>
+                  <th>残高</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="today-row">
+                  <td>2026/6/28</td>
+                  <td>🏃 歩行達成（8,432歩）</td>
+                  <td style="color:var(--green-mid); font-weight:700;">+15pt</td>
+                  <td>247pt</td>
+                </tr>
+                <tr>
+                  <td>2026/6/27</td>
+                  <td>🏃 歩行達成（9,870歩）</td>
+                  <td style="color:var(--green-mid); font-weight:700;">+8pt</td>
+                  <td>232pt</td>
+                </tr>
+                <tr>
+                  <td>2026/6/26</td>
+                  <td>🏥 健診参加ボーナス</td>
+                  <td style="color:var(--green-mid); font-weight:700;">+50pt</td>
+                  <td>224pt</td>
+                </tr>
+                <tr>
+                  <td>2026/6/25</td>
+                  <td>🏃 歩行達成（8,100歩）</td>
+                  <td style="color:var(--green-mid); font-weight:700;">+12pt</td>
+                  <td>174pt</td>
+                </tr>
+                <tr>
+                  <td>2026/6/24</td>
+                  <td>🏃 歩行達成（7,210歩）</td>
+                  <td style="color:var(--green-mid); font-weight:700;">+10pt</td>
+                  <td>162pt</td>
+                </tr>
+                <tr>
+                  <td>2026/6/23</td>
+                  <td>🏃 歩行達成（9,340歩）</td>
+                  <td style="color:var(--green-mid); font-weight:700;">+18pt</td>
+                  <td>152pt</td>
+                </tr>
+                <tr>
+                  <td>2026/6/21</td>
+                  <td>🏆 週5日連続達成ボーナス</td>
+                  <td style="color:var(--green-mid); font-weight:700;">+20pt</td>
+                  <td>134pt</td>
+                </tr>
+                <tr>
+                  <td>2026/6/20</td>
+                  <td>🏃 歩行達成（6,820歩）</td>
+                  <td style="color:var(--green-mid); font-weight:700;">+8pt</td>
+                  <td>114pt</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div style="margin-top:16px; border-top:1px solid var(--border); padding-top:14px;">
+              <div class="sec-title" style="font-size:14px;">🛒 ポイント使用履歴</div>
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>日付</th>
+                    <th>内容</th>
+                    <th>使用</th>
+                    <th>残高</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>2026/6/15</td>
+                    <td>🍆 野菜交換（なす 3本）</td>
+                    <td style="color:var(--red); font-weight:700;">-100pt</td>
+                    <td>106pt</td>
+                  </tr>
+                  <tr>
+                    <td>2026/5/20</td>
+                    <td>🥒 野菜交換（きゅうり 5本）</td>
+                    <td style="color:var(--red); font-weight:700;">-100pt</td>
+                    <td>206pt</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Rules card -->
+          <div>
+            <div class="rules-card" style="margin-bottom:16px;">
+              <div class="rc-title">🌟 ポイント獲得ルール</div>
+              <div class="rule-item">
+                <span class="ri-ico">🚶</span>
+                <span>1,000歩あたり</span>
+                <span class="ri-pts">1pt</span>
+              </div>
+              <div class="rule-item">
+                <span class="ri-ico">🏃</span>
+                <span>10,000歩達成ボーナス</span>
+                <span class="ri-pts">+10pt</span>
+              </div>
+              <div class="rule-item">
+                <span class="ri-ico">🏥</span>
+                <span>健康診断参加</span>
+                <span class="ri-pts">+50pt</span>
+              </div>
+              <div class="rule-item">
+                <span class="ri-ico">🏆</span>
+                <span>週5日連続達成</span>
+                <span class="ri-pts">+20pt</span>
+              </div>
+              <div class="rule-item">
+                <span class="ri-ico">👨‍👩‍👧</span>
+                <span>家族との連携設定</span>
+                <span class="ri-pts">+5pt</span>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="sec-title" style="font-size:14px;">📊 今月の集計</div>
+              <div style="display:flex; flex-direction:column; gap:10px;">
+                <div class="mini-stat">
+                  <span class="ms-label">今月の獲得合計</span>
+                  <span class="ms-val" style="color:var(--green-mid);">+141pt</span>
+                </div>
+                <div class="mini-stat">
+                  <span class="ms-label">今月の使用合計</span>
+                  <span class="ms-val" style="color:var(--red);">-100pt</span>
+                </div>
+                <div class="mini-stat">
+                  <span class="ms-label">今月の純増加</span>
+                  <span class="ms-val">+41pt</span>
+                </div>
+              </div>
+
+              <div style="margin-top:16px; text-align:center;">
+                <a href="#" class="btn-primary" style="width:100%; justify-content:center;">🥕 野菜と交換する</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /page-points -->
+
+      <!-- ===== PAGE: EXCHANGE ===== -->
+      <div class="page" id="page-exchange">
+
+        <!-- Balance reminder -->
+        <div class="exchange-balance-bar">
+          <span style="font-size:28px;">🌟</span>
+          <div>
+            <div class="eb-label">現在の保有ポイント</div>
+            <span class="eb-pts">247pt</span>
+          </div>
+          <div style="width:1px; background:var(--border); height:40px; margin:0 8px;"></div>
+          <div style="font-size:13px; color:var(--text-mid); line-height:1.6;">
+            農家から提供された <strong style="color:var(--green-dark)">規格外野菜</strong> とポイントで交換できます。<br>
+            ※ 受け取りは毎週土曜日・長野市民会館にて
+          </div>
+        </div>
+
+        <div class="sec-title">🥕 交換できる野菜一覧</div>
+
+        <!-- Vegetable grid -->
+        <div class="exchange-veg-grid">
+
+          <div class="exveg-card">
+            <span class="exveg-emoji">🍆</span>
+            <div class="exveg-name">長野産 なす</div>
+            <div class="exveg-qty">3本セット</div>
+            <div class="exveg-pts-badge">🌟 100pt</div>
+            <div class="exveg-stock">残り 5セット</div>
+            <button class="exveg-btn" onclick="alert('「長野産 なす（3本）」を100ptで交換申請しました！\n土曜日に長野市民会館でお受け取りください。')">🛒 交換する</button>
+          </div>
+
+          <div class="exveg-card">
+            <span class="exveg-emoji">🥒</span>
+            <div class="exveg-name">信州 きゅうり</div>
+            <div class="exveg-qty">5本セット</div>
+            <div class="exveg-pts-badge">🌟 80pt</div>
+            <div class="exveg-stock">残り 12セット</div>
+            <button class="exveg-btn" onclick="alert('「信州 きゅうり（5本）」を80ptで交換申請しました！\n土曜日に長野市民会館でお受け取りください。')">🛒 交換する</button>
+          </div>
+
+          <div class="exveg-card">
+            <span class="exveg-tag-new">NEW</span>
+            <span class="exveg-emoji">🥬</span>
+            <div class="exveg-name">農家直送 ズッキーニ</div>
+            <div class="exveg-qty">2本セット</div>
+            <div class="exveg-pts-badge">🌟 120pt</div>
+            <div class="exveg-stock">残り 3セット</div>
+            <button class="exveg-btn" onclick="alert('「農家直送 ズッキーニ（2本）」を120ptで交換申請しました！\n土曜日に長野市民会館でお受け取りください。')">🛒 交換する</button>
+          </div>
+
+          <div class="exveg-card">
+            <span class="exveg-emoji">🍅</span>
+            <div class="exveg-name">長野産 トマト</div>
+            <div class="exveg-qty">4個セット</div>
+            <div class="exveg-pts-badge">🌟 150pt</div>
+            <div class="exveg-stock">残り 8セット</div>
+            <button class="exveg-btn" onclick="alert('「長野産 トマト（4個）」を150ptで交換申請しました！\n土曜日に長野市民会館でお受け取りください。')">🛒 交換する</button>
+          </div>
+
+          <div class="exveg-card">
+            <span class="exveg-tag-low">残り少！</span>
+            <span class="exveg-emoji">🌽</span>
+            <div class="exveg-name">特選 とうもろこし</div>
+            <div class="exveg-qty">2本セット</div>
+            <div class="exveg-pts-badge">🌟 200pt</div>
+            <div class="exveg-stock low-stock">残り わずか 2セット</div>
+            <button class="exveg-btn" onclick="alert('「特選 とうもろこし（2本）」を200ptで交換申請しました！\n土曜日に長野市民会館でお受け取りください。')">🛒 交換する</button>
+          </div>
+
+          <div class="exveg-card">
+            <span class="exveg-emoji">🫑</span>
+            <div class="exveg-name">地元産 ピーマン</div>
+            <div class="exveg-qty">6個セット</div>
+            <div class="exveg-pts-badge">🌟 60pt</div>
+            <div class="exveg-stock">残り 20セット</div>
+            <button class="exveg-btn" onclick="alert('「地元産 ピーマン（6個）」を60ptで交換申請しました！\n土曜日に長野市民会館でお受け取りください。')">🛒 交換する</button>
+          </div>
+
+        </div>
+
+        <!-- Exchange history + pickup info -->
+        <div class="bot-grid">
+
+          <div class="card">
+            <div class="sec-title">🗓 交換履歴</div>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>日付</th>
+                  <th>交換した野菜</th>
+                  <th>使用ポイント</th>
+                  <th>受け取り状況</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>2026/6/15</td>
+                  <td>🍆 長野産 なす（3本）</td>
+                  <td style="color:var(--red); font-weight:700;">-100pt</td>
+                  <td><span class="badge-good">受け取り済み</span></td>
+                </tr>
+                <tr>
+                  <td>2026/5/20</td>
+                  <td>🥒 信州 きゅうり（5本）</td>
+                  <td style="color:var(--red); font-weight:700;">-100pt</td>
+                  <td><span class="badge-good">受け取り済み</span></td>
+                </tr>
+                <tr>
+                  <td>2026/4/12</td>
+                  <td>🍅 長野産 トマト（4個）</td>
+                  <td style="color:var(--red); font-weight:700;">-150pt</td>
+                  <td><span class="badge-good">受け取り済み</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div>
+            <div class="pickup-card">
+              <div class="pc-title">📍 受け取り場所・日程</div>
+              <div style="font-size:14px; color:#1a4a8a; line-height:2; font-weight:600;">
+                🏛 長野市民会館<br>
+                📅 毎週土曜日<br>
+                ⏰ 午前 9:00 〜 12:00
+              </div>
+              <div style="font-size:12px; color:#4a6a8a; margin-top:10px; line-height:1.7;">
+                ※ 受け取りには健康手帳またはアプリの交換証明画面が必要です。<br>
+                ※ 当日の天候により変更になる場合があります。
+              </div>
+            </div>
+
+            <div class="card" style="margin-top:16px;">
+              <div style="font-size:14px; font-weight:700; color:var(--earth); margin-bottom:8px;">💡 交換のヒント</div>
+              <div style="font-size:13px; color:var(--text-mid); line-height:1.8;">
+                規格外野菜はサイズや形が不揃いですが、<strong>味は通常品と変わりありません！</strong><br>
+                農家さんが丹精込めて育てた新鮮野菜を、ぜひお楽しみください。
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div><!-- /page-exchange -->
+
+      <!-- ===== PAGE: CHECKUP ===== -->
+      <div class="page" id="page-checkup">
+
+        <!-- Next checkup card -->
+        <div class="checkup-next-card">
+          <div class="cnc-icon">🏥</div>
+          <div class="cnc-info">
+            <h3>次回健康診断のご予定</h3>
+            <div class="cnc-date">📅 2026年7月12日（土）午前 10:00 〜</div>
+            <div class="cnc-loc">📍 長野市民会館　大会議室</div>
+            <a href="#" class="cnc-btn" onclick="alert('予約確認画面を開きます。\n予約番号：LNG-2026-0712-田中\n会場：長野市民会館 大会議室\n時間：10:00〜'); return false;">📋 予約を確認する</a>
+          </div>
+          <div style="text-align:right; flex-shrink:0;">
+            <div style="font-size:13px; opacity:0.85; margin-bottom:6px;">今年の参加</div>
+            <div style="font-size:36px; font-weight:800; line-height:1;">2<span style="font-size:16px;">/4回</span></div>
+            <div style="font-size:12px; opacity:0.75; margin-top:4px;">付与済み: 100pt</div>
+          </div>
+        </div>
+
+        <div class="checkup-page-grid">
+
+          <!-- Past results -->
+          <div class="card">
+            <div class="sec-title">📋 過去の健診結果</div>
+            <table class="results-table">
+              <thead>
+                <tr>
+                  <th>日付</th>
+                  <th>血圧</th>
+                  <th>BMI</th>
+                  <th>血糖値</th>
+                  <th>コレステロール</th>
+                  <th>総合評価</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>2026/4/10</td>
+                  <td>118 / 74</td>
+                  <td>22.1</td>
+                  <td>98 mg/dL</td>
+                  <td>185 mg/dL</td>
+                  <td><span class="badge-good">✅ 良好</span></td>
+                </tr>
+                <tr>
+                  <td>2025/11/8</td>
+                  <td>122 / 78</td>
+                  <td>21.9</td>
+                  <td>102 mg/dL</td>
+                  <td>192 mg/dL</td>
+                  <td><span class="badge-good">✅ 良好</span></td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div style="margin-top:20px;">
+              <div class="sec-title" style="font-size:14px;">📈 健康トレンド</div>
+
+              <div class="trend-bar-wrap">
+                <div class="trend-bar-label">
+                  <span>🫀 血圧（収縮期）</span>
+                  <span>118 mmHg（正常範囲）</span>
+                </div>
+                <div class="trend-bar-track">
+                  <div class="trend-bar-fill blue-fill" style="width:59%"></div>
+                </div>
+              </div>
+
+              <div class="trend-bar-wrap">
+                <div class="trend-bar-label">
+                  <span>⚖️ BMI</span>
+                  <span>22.1（標準）</span>
+                </div>
+                <div class="trend-bar-track">
+                  <div class="trend-bar-fill" style="width:67%"></div>
+                </div>
+              </div>
+
+              <div class="trend-bar-wrap">
+                <div class="trend-bar-label">
+                  <span>🩸 血糖値</span>
+                  <span>98 mg/dL（正常範囲）</span>
+                </div>
+                <div class="trend-bar-track">
+                  <div class="trend-bar-fill blue-fill" style="width:56%"></div>
+                </div>
+              </div>
+
+              <div style="margin-top:12px; padding:12px 16px; background:var(--green-pale); border-radius:10px; font-size:13px; color:var(--green-dark);">
+                💬 <strong>担当カウンセラー 佐々木先生より</strong><br>
+                <span style="color:var(--text-mid);">血圧・血糖値ともに安定しています。引き続き毎日のウォーキングを続けてください！次回も楽しみにしています。</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Prep checklist + counselor -->
+          <div>
+            <div class="card" style="margin-bottom:16px;">
+              <div class="sec-title" style="font-size:15px;">📝 次回健診の準備チェック</div>
+              <div>
+                <div class="checklist-item">
+                  <span class="ci-check">✅</span>
+                  <div>
+                    <div style="font-weight:600; color:var(--text-dark);">予約完了</div>
+                    <div style="font-size:12px; color:var(--text-light);">予約番号：LNG-2026-0712-田中</div>
+                  </div>
+                </div>
+                <div class="checklist-item">
+                  <span class="ci-check">⬜</span>
+                  <div>
+                    <div style="font-weight:600; color:var(--text-dark);">前日21時以降 飲食禁止</div>
+                    <div style="font-size:12px; color:var(--text-light);">水・お茶のみ可</div>
+                  </div>
+                </div>
+                <div class="checklist-item">
+                  <span class="ci-check">⬜</span>
+                  <div>
+                    <div style="font-weight:600; color:var(--text-dark);">当日 健康手帳を持参</div>
+                    <div style="font-size:12px; color:var(--text-light);">長野市発行の健康手帳</div>
+                  </div>
+                </div>
+                <div class="checklist-item">
+                  <span class="ci-check">⬜</span>
+                  <div>
+                    <div style="font-weight:600; color:var(--text-dark);">検尿容器を持参</div>
+                    <div style="font-size:12px; color:var(--text-light);">前回配布の容器を使用</div>
+                  </div>
+                </div>
+                <div class="checklist-item">
+                  <span class="ci-check">⬜</span>
+                  <div>
+                    <div style="font-weight:600; color:var(--text-dark);">服装は脱ぎ着しやすいもの</div>
+                    <div style="font-size:12px; color:var(--text-light);">血圧測定のため袖をまくれる服装で</div>
+                  </div>
+                </div>
+                <div class="checklist-item">
+                  <span class="ci-check">⬜</span>
+                  <div>
+                    <div style="font-weight:600; color:var(--text-dark);">常用薬リストを持参</div>
+                    <div style="font-size:12px; color:var(--text-light);">飲んでいるお薬の名前と量のメモ</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="sec-title" style="font-size:14px;">👩‍⚕️ 担当カウンセラー</div>
+              <div style="display:flex; align-items:center; gap:14px; padding:12px 0;">
+                <div style="width:52px; height:52px; border-radius:50%; background:#e6f0fb; display:flex; align-items:center; justify-content:center; font-size:28px; flex-shrink:0;">👩‍⚕️</div>
+                <div>
+                  <div style="font-size:16px; font-weight:700; color:var(--text-dark);">佐々木 先生</div>
+                  <div style="font-size:12px; color:var(--text-light);">長野市健康支援センター</div>
+                  <div style="font-size:13px; color:var(--green-mid); margin-top:4px; font-weight:600;">📞 026-XXX-XXXX（月〜金 9:00-17:00）</div>
+                </div>
+              </div>
+              <div style="margin-top:10px;">
+                <a href="#" class="btn-ghost" style="width:100%; justify-content:center;" onclick="alert('メッセージ機能は次のアップデートで実装予定です。'); return false;">✉️ 先生にメッセージ</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div><!-- /page-checkup -->
+
+      <!-- ===== PAGE: FAMILY ===== -->
+      <div class="page" id="page-family">
+
+        <div class="mid-grid">
+
+          <!-- Family members + share settings -->
+          <div>
+            <div class="card" style="margin-bottom:22px;">
+              <div class="sec-title">👨‍👩‍👧 登録されている家族</div>
+
+              <div class="family-member-card">
+                <div class="fm-avatar">👩</div>
+                <div class="fm-info">
+                  <div class="fm-name">田中 洋子さん</div>
+                  <div class="fm-relation">娘 / 長野市在住</div>
+                  <div class="fm-notif"><span class="notif-on">📱 LINE通知 ON</span></div>
+                </div>
+                <button class="fm-btn" onclick="alert('洋子さんの通知設定を変更します。')">⚙️ 設定</button>
+              </div>
+
+              <div class="family-member-card">
+                <div class="fm-avatar">👨</div>
+                <div class="fm-info">
+                  <div class="fm-name">田中 健さん</div>
+                  <div class="fm-relation">息子 / 東京都在住</div>
+                  <div class="fm-notif"><span class="notif-off">📱 LINE通知 OFF</span></div>
+                </div>
+                <button class="fm-btn" onclick="alert('健さんの通知設定を変更します。')">⚙️ 設定</button>
+              </div>
+
+              <div style="margin-top:14px; text-align:center;">
+                <a href="#" class="btn-ghost" onclick="alert('家族の追加画面を開きます。'); return false;">➕ 家族を追加する</a>
+              </div>
+            </div>
+
+            <!-- Share settings -->
+            <div class="card">
+              <div class="sec-title">🔒 共有する情報の設定</div>
+              <div class="share-settings-grid">
+                <div class="share-item">
+                  <span>👟 毎日の歩数</span>
+                  <span class="share-status-on">共有中</span>
+                </div>
+                <div class="share-item">
+                  <span>🏥 健診結果</span>
+                  <span class="share-status-on">共有中</span>
+                </div>
+                <div class="share-item">
+                  <span>🌟 ポイント残高</span>
+                  <span class="share-status-on">共有中</span>
+                </div>
+                <div class="share-item">
+                  <span>📍 現在地</span>
+                  <span class="share-status-off">非公開</span>
+                </div>
+              </div>
+              <div style="font-size:12px; color:var(--text-light); line-height:1.7;">
+                ※ 共有された情報は登録済みの家族のみが閲覧できます。<br>
+                ※ 設定はいつでも変更できます。
+              </div>
+            </div>
+          </div>
+
+          <!-- Notifications + message -->
+          <div>
+            <div class="card" style="margin-bottom:22px;">
+              <div class="sec-title" style="font-size:15px;">🔔 家族への通知履歴</div>
+              <div>
+                <div class="notif-log-item">
+                  <span class="nli-time">6/28 14:30</span>
+                  <div>
+                    <div class="nli-msg">歩数 8,432歩 達成のお知らせ</div>
+                    <div class="nli-to">→ 洋子さんへ送信済み ✓</div>
+                  </div>
+                </div>
+                <div class="notif-log-item">
+                  <span class="nli-time">6/26 18:00</span>
+                  <div>
+                    <div class="nli-msg">健康診断参加完了のお知らせ</div>
+                    <div class="nli-to">→ 洋子さんへ送信済み ✓</div>
+                  </div>
+                </div>
+                <div class="notif-log-item">
+                  <span class="nli-time">6/23 20:15</span>
+                  <div>
+                    <div class="nli-msg">週間目標 達成のお知らせ</div>
+                    <div class="nli-to">→ 洋子さんへ送信済み ✓</div>
+                  </div>
+                </div>
+                <div class="notif-log-item">
+                  <span class="nli-time">6/15 11:00</span>
+                  <div>
+                    <div class="nli-msg">野菜交換（なす）完了のお知らせ</div>
+                    <div class="nli-to">→ 洋子さんへ送信済み ✓</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Manual message -->
+            <div class="card" style="margin-bottom:22px;">
+              <div class="sec-title" style="font-size:15px;">✉️ 家族へメッセージを送る</div>
+              <div style="margin-bottom:12px;">
+                <select style="width:100%; padding:9px 12px; border:1.5px solid var(--border); border-radius:8px; font-size:14px; font-family:inherit; color:var(--text-dark); background:var(--card-bg); margin-bottom:10px;">
+                  <option>洋子さん（娘）へ送る</option>
+                  <option>健さん（息子）へ送る</option>
+                  <option>全員へ送る</option>
+                </select>
+                <textarea class="msg-textarea" placeholder="メッセージを入力してください…&#10;例：今日も元気に歩きました！野菜もおいしかったよ。"></textarea>
+              </div>
+              <button class="btn-primary" style="width:100%; justify-content:center;" onclick="alert('メッセージを送信しました！')">📤 送信する</button>
+            </div>
+
+            <!-- Emergency -->
+            <div class="emergency-card">
+              <div class="ec-icon">🆘</div>
+              <div class="ec-info">
+                <div class="ec-title">緊急連絡機能</div>
+                <div class="ec-sub">急に体調が悪くなったとき、ボタン1つで家族に知らせることができます。</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+          </div>
+        </div>
+
+      </div><!-- /page-family -->
+
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+
+    // ===== PAGE NAVIGATION =====
+    document.querySelectorAll('nav a[data-page]').forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        const target = link.dataset.page;
+
+        // Update nav active state
+        document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+        link.classList.add('active');
+
+        // Update page visibility
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById('page-' + target)?.classList.add('active');
+
+        // Update topbar title
+        const titles = {
+          home: '今日もよく歩いています！',
+          steps: '歩数・記録',
+          points: 'ポイント残高・履歴',
+          exchange: '野菜と交換',
+          checkup: '健康診断',
+          family: '家族へ共有'
+        };
+        const h2 = document.querySelector('.topbar-left h2');
+        if (h2 && titles[target]) h2.textContent = titles[target];
+
+        // Scroll to top
+        document.querySelector('.content').scrollTop = 0;
+      });
+    });
+
+    // ===== HOME PAGE: Animate ring on load =====
+    const ring = document.querySelector('.ring-fg');
+    if (ring) {
+      ring.style.strokeDashoffset = 376;
+      setTimeout(() => {
+        ring.style.strokeDashoffset = 94; // 75%
+      }, 200);
+    }
+
+    // ===== HOME PAGE: Motivate banner close =====
+    const closeBtn = document.querySelector('.mb-close');
+    const banner = document.querySelector('.motivate-banner');
+    if (closeBtn && banner) {
+      closeBtn.addEventListener('click', () => {
+        banner.style.display = 'none';
+      });
+    }
+
+    // ===== HOME PAGE: Vegetable card click =====
+    document.querySelectorAll('.veg-card.available').forEach(card => {
+      card.addEventListener('click', () => {
+        const name = card.querySelector('.veg-name').textContent;
+        const pts = card.querySelector('.veg-pts').textContent;
+        alert(`「${name}」(${pts}) を選択しました。\n次回の健康診断会場で交換できます！`);
+      });
+    });
+
+    document.querySelectorAll('.veg-card.locked').forEach(card => {
+      card.addEventListener('click', () => {
+        alert('ポイントが足りません。もっと歩いてポイントを貯めましょう！');
+      });
+    });
+  });
+</script>
+</body>
+</html>
